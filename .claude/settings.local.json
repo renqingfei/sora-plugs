@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__fetch__fetch",
+      "mcp__augment-context-engine__codebase-retrieval",
+      "Bash(python -c:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}
