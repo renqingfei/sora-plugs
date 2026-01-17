@@ -1,0 +1,9 @@
+{
+  "prompt": "一只可爱的小猫在草地上玩耍",
+  "images": ["https://picsum.photos/512/512"],
+  "orientation": "landscape",
+  "size": "small",
+  "model": "sora-2-all",
+  "duration": 8,
+  "watermark": false
+}
