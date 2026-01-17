@@ -8,7 +8,14 @@
       "Bash(python:*)",
       "Bash(timeout:*)",
       "Bash(ping:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(start /B python main.py)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(where:*)",
+      "Bash(dir:*)",
+      "Bash(start /B sora2-plugin.exe)",
+      "Bash(taskkill:*)"
     ]
   }
 }

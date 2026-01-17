@@ -194,7 +194,7 @@ async def health_check():
 
 if __name__ == "__main__":
     uvicorn.run(
-        "main:app",
+        app,  # 直接传递 app 对象，适配 PyInstaller 打包
         host=PLUGIN_HOST,
         port=PLUGIN_PORT,
         reload=False,
