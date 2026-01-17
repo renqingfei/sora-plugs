@@ -8,6 +8,7 @@
   "exe": "sora2-plugin.exe",
   "params": [],
   "description": "基于云雾API的Sora-2视频生成插件，支持图生视频",
+  "isSync": true,
   "options": [
     {
       "key": "sessionId",
@@ -55,9 +56,10 @@
       "label": "视频时长",
       "type": "select",
       "required": true,
-      "hidden": false,
+      "hidden": true,
+      "lineShow": true,
       "isHeader": false,
-      "default": "8",
+      "default": 10,
       "placeholder": "请选择视频时长",
       "scope": "video",
       "options": [
