@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Sora-2 视频生成插件 - 异步模式
-支持图生视频功能
+支持图生视频功能，自动上传本地图片到临时图床
 """
 import logging
 from typing import Optional
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Header, HTTPException
-from fastapi.responses import JSONResponse
 import uvicorn
 
 from config import PLUGIN_HOST, PLUGIN_PORT
@@ -19,6 +18,7 @@ from models import (
     ErrorResponse
 )
 from yunwu_client import YunwuClient
+from image_uploader import process_images
 
 # 配置日志
 logging.basicConfig(
@@ -49,7 +49,7 @@ app = FastAPI(
     response_model=VideoSubmitResponse,
     responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
     summary="提交视频生成任务",
-    description="提交图生视频任务，返回任务ID用于后续查询"
+    description="提交图生视频任务，返回任务ID用于后续查询。支持本地图片路径，会自动上传到临时图床。"
 )
 async def submit_video(
     request: VideoSubmitRequest,
@@ -59,7 +59,7 @@ async def submit_video(
     提交视频生成任务（异步模式）
 
     - **prompt**: 视频描述文本（必填）
-    - **images**: 图片URL列表（必填）
+    - **images**: 图片列表（必填），支持本地路径或网络URL
     - **orientation**: 视频方向 portrait(竖屏) / landscape(横屏)
     - **size**: 分辨率 large(1080p) / small(720p)
     - **model**: 模型名称，默认 sora-2
@@ -73,10 +73,14 @@ async def submit_video(
         raise HTTPException(status_code=400, detail="图生视频模式必须提供images参数")
 
     try:
+        # 处理图片：本地路径自动上传到图床
+        processed_images = await process_images(request.images)
+        logger.info(f"图片处理完成: {processed_images}")
+
         client = YunwuClient(sessionId)
         result = await client.create_video(
             prompt=request.prompt,
-            images=request.images,
+            images=processed_images,
             orientation=request.orientation,
             size=request.size,
             model=request.model,
@@ -93,6 +97,9 @@ async def submit_video(
 
     except HTTPException:
         raise
+    except FileNotFoundError as e:
+        logger.error(f"文件不存在: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"创建视频任务失败: {str(e)}")
         raise HTTPException(status_code=500, detail=f"创建视频任务失败: {str(e)}")
@@ -194,7 +201,7 @@ async def health_check():
 
 if __name__ == "__main__":
     uvicorn.run(
-        app,  # 直接传递 app 对象，适配 PyInstaller 打包
+        app,
         host=PLUGIN_HOST,
         port=PLUGIN_PORT,
         reload=False,

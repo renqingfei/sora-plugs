@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 class VideoSubmitRequest(BaseModel):
     """视频生成提交请求"""
     prompt: str = Field(..., description="视频描述文本")
-    images: List[str] = Field(..., description="图片URL列表")
+    images: List[str] = Field(..., description="图片列表（支持本地路径或网络URL）")
     orientation: Optional[str] = Field(default="landscape", description="视频方向: portrait(竖屏) / landscape(横屏)")
     size: Optional[str] = Field(default="large", description="分辨率: large(1080p) / small(720p)")
     model: Optional[str] = Field(default="sora-2", description="模型名称")
